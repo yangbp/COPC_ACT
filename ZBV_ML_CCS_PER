@@ -1,0 +1,40 @@
+@AbapCatalog.sqlViewName: 'ZBV_ML_CCS_PER'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: '期间组件按业务的汇总数'
+define view ZBV_ML_CCS_PER_DDL
+  with parameters
+    @Environment.systemField: #SYSTEM_LANGUAGE
+    p_sys_langu : syst_langu
+  as select from FCML_CCS_REP_DDL (p_sys_langu : $session.system_language ) as _rep_ccs
+{
+  _rep_ccs.kalnr_mat         as kalnr,
+  _rep_ccs.poper,
+  _rep_ccs.BDATJ,
+  _rep_ccs.CATEG,
+  _rep_ccs.curtp,
+  @Semantics.currencyCode: true
+  _rep_ccs.waers,
+  _rep_ccs.elesmhk,
+  _rep_ccs.element,
+
+  @Semantics.amount.currencyCode: 'waers'
+  sum(_rep_ccs.PRCDIF_FIX)   as prcdif_fix,
+  @Semantics.amount.currencyCode: 'waers'
+  sum(_rep_ccs.PRCDIF_VAR)   as prcdif_var,
+  @Semantics.amount.currencyCode: 'waers'
+  sum(_rep_ccs.PRCDIF_FIX_S) as prcdif_fix_s,
+  @Semantics.amount.currencyCode: 'waers'
+  sum(_rep_ccs.PRCDIF_VAR_S) as prcdif_var_s
+}
+
+group by
+  _rep_ccs.kalnr_mat,
+  _rep_ccs.poper,
+  _rep_ccs.BDATJ,
+  _rep_ccs.CATEG,
+  _rep_ccs.curtp,
+  _rep_ccs.waers,
+  _rep_ccs.elesmhk,
+  _rep_ccs.element
