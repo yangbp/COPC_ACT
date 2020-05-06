@@ -1,0 +1,123 @@
+*&---------------------------------------------------------------------*
+*& Report zco_cogs_ccs_aux001
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+report zco_cogs_ccs_aux001.
+
+tables: zbv_cogs_itm,t001,bkpf.
+
+
+data: gr_alv       type ref to cl_salv_table,
+      gr_functions
+        type ref to cl_salv_functions_list.
+
+data: lr_layout type ref to cl_salv_layout,
+      ls_key    type salv_s_layout_key.
+
+data: gt_cogs_itm   type table of zbv_cogs_itm,
+      gs_cogs_itm   like line of gt_cogs_itm,
+      gt_ztcogs_ccs type table of ztcogs_ccs,
+      gs_ztcogs_ccs like line of gt_ztcogs_ccs.
+data: gt_ccs_per type table of zbv_ml_ccs_peru,
+      gs_ccs_per like line of gt_ccs_per,
+      gt_ml_per  type table of zbv_ml_peru,
+      gs_ml_per  like line of gt_ml_per.
+
+field-symbols: <fs_cogs_itm>   type zbv_cogs_itm,
+               <fs_ccs_per>    type zbv_ml_ccs_peru,
+               <fs_ml_per>     type zbv_ml_peru,
+               <fs_ztcogs_ccs> type ztcogs_ccs.
+
+data: lv_item_no type docln.
+
+parameters: p_bukrs type bukrs,
+            p_gjahr type gjahr default sy-datum(4),
+            p_poper type poper.
+select-options: s_belnr for bkpf-belnr.
+
+parameters: p_update as checkbox.
+
+start-of-selection.
+
+
+
+* get the WL document header
+  select * into corresponding fields of table gt_cogs_itm from zbv_cogs_itm
+                                                        where bukrs = p_bukrs
+                                                        and  poper = p_poper
+                                                        and  belnr in s_belnr.
+
+  select * into corresponding fields of table gt_ml_per from  zbv_ml_peru
+                              where bukrs = p_bukrs
+                               and bdatj = p_gjahr
+                               and poper = p_poper
+                               and categ  = 'VN'
+                               and mlast = 3
+                               and curtp =  '10'.
+
+  select * into corresponding fields of table gt_ccs_per from  zbv_ml_ccs_peru
+                              where bukrs = p_bukrs
+                             and bdatj = p_gjahr
+                             and poper = p_poper
+                             and categ  = 'VN'
+                             and mlast = 3
+                             and curtp = '10'.
+
+
+
+  loop at gt_cogs_itm assigning <fs_cogs_itm>.
+    lv_item_no =  1.
+
+    append initial line to gt_ztcogs_ccs assigning <fs_ztcogs_ccs>.
+    move-corresponding <fs_cogs_itm>  to <fs_ztcogs_ccs>.
+    <fs_ztcogs_ccs>-itmn = lv_item_no.
+    <fs_ztcogs_ccs>-hsl_ref = <fs_cogs_itm>-hsl.
+
+    if <fs_cogs_itm>-vprsv = 'V' .
+      <fs_ztcogs_ccs>-element = 'Z1'.
+      <fs_ztcogs_ccs>-elesmhk = '30'.
+    endif.
+
+    if <fs_cogs_itm>-blart = 'SU'.
+      <fs_ztcogs_ccs>-hsl = 0.
+    endif.
+    if <fs_cogs_itm>-vprsv = 'S' and <fs_cogs_itm>-blart = 'WL'.
+* Read the actual cost
+      unassign <fs_ml_per>.
+      read table gt_ml_per assigning <fs_ml_per> with key kalnr =  <fs_cogs_itm>-kalnr.
+      if sy-subrc = 0 and <fs_ml_per>-lbkum <> 0.
+        <fs_ztcogs_ccs>-hsl = 0.
+
+        loop at gt_ccs_per assigning <fs_ccs_per>  where kalnr =  <fs_cogs_itm>-kalnr.
+          lv_item_no = lv_item_no + 1.
+          append initial line to gt_ztcogs_ccs assigning <fs_ztcogs_ccs>.
+          move-corresponding <fs_cogs_itm>  to <fs_ztcogs_ccs>.
+          <fs_ztcogs_ccs>-element = <fs_ccs_per>-element.
+          <fs_ztcogs_ccs>-elesmhk = <fs_ccs_per>-elesmhk.
+          <fs_ztcogs_ccs>-itmn = lv_item_no.
+          <fs_ztcogs_ccs>-msl = 0.
+          <fs_ztcogs_ccs>-hsl =  <fs_cogs_itm>-msl / <fs_ml_per>-lbkum * ( <fs_ccs_per>-prcdif_fix + <fs_ccs_per>-prcdif_var ).
+        endloop.
+      endif.
+    endif.
+  endloop.
+
+  if p_update = 'X'.
+    modify ztcogs_ccs from table gt_ztcogs_ccs[].
+    commit work and wait.
+  endif.
+
+* create the ALV object
+  cl_salv_table=>factory(
+    importing
+      r_salv_table   = gr_alv
+    changing
+      t_table        = gt_ztcogs_ccs
+         ).
+
+* set default set of generic functions
+  gr_functions = gr_alv->get_functions( ).
+  gr_functions->set_all( ).
+* display it!
+  gr_alv->display( ).
