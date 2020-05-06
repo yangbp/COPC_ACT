@@ -1,0 +1,33 @@
+@EndUserText.label : 'COGS 成本组件细分'
+@AbapCatalog.enhancementCategory : #EXTENSIBLE_CHARACTER_NUMERIC
+@AbapCatalog.tableCategory : #TRANSPARENT
+@AbapCatalog.deliveryClass : #A
+@AbapCatalog.dataMaintenance : #ALLOWED
+define table ztcogs_ccs {
+  key mandt   : mandt not null;
+  key belnr   : belnr_d not null;
+  key gjahr   : gjahr not null;
+  key bukrs   : bukrs not null;
+  key docln   : docln6 not null;
+  key itmn    : docln6 not null;
+  blart       : blart;
+  fiscyearper : jahrper;
+  poper       : poper;
+  budat       : budat;
+  kdauf       : kdauf;
+  kdpos       : kdpos;
+  mat_kdauf   : mat_kdauf;
+  mat_kdpos   : mat_kdpos;
+  elesmhk     : ck_elesmhk;
+  element     : ck_element;
+  @Semantics.amount.currencyCode : 'ztcogs_ccs.rhcur'
+  hsl         : fins_vhcur12;
+  @Semantics.amount.currencyCode : 'ztcogs_ccs.rhcur'
+  hsl_ref     : fins_vhcur12;
+  rhcur       : fins_currh;
+  kalnr       : ck_kalnr;
+  @Semantics.quantity.unitOfMeasure : 'ztcogs_ccs.runit'
+  msl         : quan1_12;
+  runit       : meins;
+
+}
