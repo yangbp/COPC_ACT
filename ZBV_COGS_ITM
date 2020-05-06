@@ -1,0 +1,51 @@
+@AbapCatalog.sqlViewName: 'ZBV_COGS_ITM'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: '销售成本明细'
+define view ZBV_COGS_ITM_DDL
+  as select from acdoca as _acdoca
+{
+  _acdoca.rbukrs   as bukrs,
+  _acdoca.gjahr,
+  _acdoca.belnr,
+  _acdoca.docln,
+  _acdoca.fiscyearper,
+  _acdoca.poper,
+  _acdoca.blart,
+  _acdoca.racct,
+  _acdoca.budat,
+  _acdoca.bldat,
+  _acdoca.kalnr,
+  _acdoca.kdauf,
+  _acdoca.kdpos,
+  _acdoca.werks,
+  _acdoca.matnr,
+  _acdoca.vprsv,
+  _acdoca.kunnr,
+  _acdoca.mat_kdauf,
+  _acdoca.mat_kdpos,
+  _acdoca.matkl,
+  _acdoca.vkorg,
+  _acdoca.vtweg,
+  _acdoca.spart,
+  _acdoca.fkart,
+  _acdoca.vkbur_pa,
+  _acdoca.vkgrp_pa,
+  _acdoca.wwtkd_pa,
+  _acdoca.prodh_pa,
+  _acdoca.prctr,
+  _acdoca.kdgrp,
+  _acdoca.land1,
+  _acdoca.ebeln,
+  _acdoca.ebelp,
+  _acdoca.rhcur,
+  _acdoca.rkcur,
+  _acdoca.hsl,
+  _acdoca.ksl,
+  _acdoca.msl
+}
+where
+      _acdoca.racct between '0064010001' and '0064010003'
+//  and _acdoca.blart =       'WL'
+  and _acdoca.rldnr =       '0L'
