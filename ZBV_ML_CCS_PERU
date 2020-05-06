@@ -1,0 +1,61 @@
+@AbapCatalog.sqlViewName: 'ZBV_ML_CCS_PERU'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: '单位的实际组件成本'
+define view ZBV_ML_CCS_PERU_DDL
+  //  with parameters
+  //    @Environment.systemField: #SYSTEM_LANGUAGE
+  //    p_sys_langu : syst_langu
+  as select from ZBV_ML_CCS_PER_DDL(p_sys_langu : $session.system_language ) as _rep_ccs
+
+    inner join   ZBV_ML_PER_DDL                                              as _rep on  _rep.bdatj = _rep_ccs.BDATJ
+                                                                                     and _rep.poper = _rep_ccs.poper
+                                                                                     and _rep.categ = _rep_ccs.CATEG
+                                                                                     and _rep.curtp = _rep_ccs.curtp
+                                                                                     and _rep.kalnr = _rep_ccs.kalnr
+                                                                                     and _rep.waers = _rep_ccs.waers
+    inner join   fcml_mat_v                                                  as _mat on _mat.kalnr = _rep_ccs.kalnr
+
+{
+
+  _rep_ccs.kalnr,
+
+  _mat.matnr,
+  _mat.bwkey,
+  _mat.werks,
+  _mat.sobkz,
+  _mat.vbeln,
+  _mat.posnr,
+  _mat.bwtar,
+  _mat.bukrs,
+  _mat.kokrs,
+  _mat.prctr,
+  _mat.mtart,
+  _mat.matkl,
+  @Semantics.unitOfMeasure: true
+  _mat.meins,
+  _mat.spart,
+  _mat.prdha,
+  _mat.mlast,
+  _rep_ccs.poper,
+  _rep_ccs.BDATJ,
+  _rep_ccs.CATEG,
+  _rep_ccs.curtp,
+  @Semantics.currencyCode: true
+  _rep_ccs.waers,
+  _rep_ccs.elesmhk,
+  _rep_ccs.element,
+  @Semantics.quantity.unitOfMeasure: 'meins'
+  _rep.lbkum,
+  @Semantics.amount.currencyCode: 'waers'
+  _rep_ccs.prcdif_fix,
+  @Semantics.amount.currencyCode: 'waers'
+  _rep_ccs.prcdif_var,
+  @Semantics.amount.currencyCode: 'waers'
+  case when _rep.lbkum <> 0 then
+    division(coalesce(_rep_ccs.prcdif_fix,0)
+                + coalesce(_rep_ccs.prcdif_var,0), _rep.lbkum,2)
+  end as unit_ccs
+
+}
