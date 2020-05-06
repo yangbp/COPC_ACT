@@ -1,0 +1,29 @@
+@AbapCatalog.sqlViewName: 'ZBV_ML_PER'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: '期间按业务的汇总数'
+define view ZBV_ML_PER_DDL
+  as select from fcml_rep_all_v as _rep
+{
+  _rep.kalnr_mat   as kalnr,
+  _rep.poper,
+  _rep.bdatj,
+  _rep.categ,
+  _rep.curtp,
+  _rep.waers,
+  sum(_rep.lbkum)  as lbkum,
+  sum(_rep.salk3)  as salk3,
+  sum(_rep.estprd) as estprd,
+  sum(_rep.estkdm) as estkdm,
+  sum(_rep.mstprd) as mstprd,
+  sum(_rep.mstkdm) as mstkdm
+}
+
+group by
+  _rep.kalnr_mat,
+  _rep.poper,
+  _rep.bdatj,
+  _rep.categ,
+  _rep.curtp,
+  _rep.waers
