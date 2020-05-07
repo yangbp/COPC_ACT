@@ -1,0 +1,161 @@
+@AbapCatalog.sqlViewName: 'ZBV_COPA_A001'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'COPA 明细表'
+@Analytics.dataCategory: #CUBE
+@OData.publish: true
+@VDM.viewType: #BASIC
+
+define view ZBV_COPA_A001_DDL
+  as select from    acdoca               as _acdoca
+    inner join      bkpf                 as _bkpf on  _bkpf.bukrs = _acdoca.rbukrs
+                                                  and _bkpf.gjahr = _acdoca.gjahr
+                                                  and _bkpf.belnr = _acdoca.belnr
+    left outer join ZBV_COGS_CCS_SUM_DDL as _ccs  on  _ccs.bukrs = _acdoca.rbukrs
+                                                  and _ccs.gjahr = _acdoca.gjahr
+                                                  and _ccs.belnr = _acdoca.belnr
+                                                  and _ccs.docln = _acdoca.docln
+    left outer join ZBV_VBAP_ITM_DDL     as _vbap on  _vbap.vbeln = _acdoca.kdauf
+                                                  and _vbap.posnr = _acdoca.kdpos
+{
+  key   _bkpf.belnr,
+  key   _bkpf.gjahr,
+  key   _bkpf.bukrs,
+  key   _acdoca.docln,
+        _bkpf.budat,
+        _acdoca.blart,
+        _acdoca.poper, //过账期间
+        _acdoca.fiscyearper, //期间/年度
+        _acdoca.racct,
+        _acdoca.kdauf,
+        _acdoca.kdpos,
+        _vbap.ktext,
+        _acdoca.matnr_copa                      as matnr,
+        _vbap.maktx,
+        _vbap.prodh,
+        _vbap.t179_l1,
+        _vbap.vtext_l1,
+        _vbap.t179_l2,
+        _vbap.vtext_l2,
+        _acdoca.kunnr,
+        _vbap.name1,
+        _acdoca.prctr,
+        _acdoca.wwtkd_pa,
+        _acdoca.vkorg,
+        _acdoca.kalnr,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        case when ( racct >= '0064010001' and racct <= '0064010003' ) or  racct =  '0064020001'
+            then  _acdoca.hsl end               as hsl_cogs,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        case when ( racct >= '0060010001' and racct <= '0060010003' ) or racct = '0060510001'
+            then  _acdoca.hsl * -1 end          as hsl_rev,
+
+        @Semantics.currencyCode: true
+        _acdoca.rhcur,
+        @DefaultAggregation: #SUM
+        @Semantics.quantity.unitOfMeasure: 'runit'
+        case when (racct >= '0064010001' and racct <= '0064010003' ) or  (racct = '0064020001')
+                then  _acdoca.msl end           as msl_cogs,
+
+        @Semantics.quantity.unitOfMeasure: 'runit'
+        @DefaultAggregation: #SUM
+        case when (racct >= '0060010001' and racct <= '0060010003') or (racct = '0060510001')
+            then  _acdoca.msl * -1 end          as msl_rev,
+
+        @Semantics.unitOfMeasure: true
+        _acdoca.runit,
+
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.hsl                                as hsl_ccs_t,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT001,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT002,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT003,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT004,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT005,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT006,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT007,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT008,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT009,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT010,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT012,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT014,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT016,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT017,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT019,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT021,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT023,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT025,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT027,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT028,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT029,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT001 + _ccs.TOT002 +_ccs.TOT003 +
+        _ccs.TOT004 + _ccs.TOT005 + _ccs.TOT006 +
+        _ccs.TOT007 + _ccs.TOT008 + _ccs.TOT025 +
+        _ccs.TOT007 + _ccs.TOT028 + _ccs.TOT029 as cost_mat,
+        @DefaultAggregation: #SUM
+        @Semantics.amount.currencyCode: 'rhcur'
+        _ccs.TOT012 + _ccs.TOT014 + _ccs.TOT016 +
+        _ccs.TOT017 + _ccs.TOT019 + _ccs.TOT021 +
+        _ccs.TOT023                             as cost_oh
+
+}
+where
+  (
+    racct between '0064010001' and '0064010003'
+  )
+  or(
+    racct between '0060010001' and '0060010003'
+  )
+  or(
+    racct =       '0060510001'
+  )
+  or(
+    racct =       '0064020001'
+  )
