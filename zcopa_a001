@@ -1,0 +1,71 @@
+*&---------------------------------------------------------------------*
+*& Report zcopa_a001
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+report zcopa_a001.
+tables: bkpf.
+
+data: gt_a001 type table of zcopa_a001_alv,
+      gs_a001 like line of gt_a001.
+
+data: gr_alv       type ref to cl_salv_table,
+      gr_functions
+        type ref to cl_salv_functions_list.
+
+data: lr_layout type ref to cl_salv_layout,
+      ls_key    type salv_s_layout_key.
+
+select-options: s_bukrs  for bkpf-bukrs,
+                s_budat for bkpf-budat.
+
+parameters: p_layout type slis_vari.
+
+start-of-selection.
+* select data in internal table
+
+  select * from   zbv_copa_a001
+    into corresponding fields of table gt_a001
+         where  bukrs  in s_bukrs
+  and budat in s_budat.
+
+* create the ALV object
+  cl_salv_table=>factory(
+    importing
+      r_salv_table   = gr_alv
+    changing
+      t_table        = gt_a001
+         ).
+
+* set default set of generic functions
+  gr_functions = gr_alv->get_functions( ).
+  gr_functions->set_all( ).
+
+* get the LAYOUT object
+  lr_layout = gr_alv->get_layout( ).
+* set the layout key
+  ls_key-report = sy-cprog.
+  lr_layout->set_key( value = ls_key ).
+
+* set save restriction
+*  (none restriction is intended, so we may use the default)
+  lr_layout->set_save_restriction(
+    value  = if_salv_c_layout=>restrict_none
+         ).
+
+* allow setting a default layout
+  lr_layout->set_default( value = 'X' ).
+
+* set initial layout
+  if p_layout is not initial.
+    lr_layout->set_initial_layout( value = p_layout ).
+  endif.
+* Customized Toolbar
+*从程序 SAPLSALV_METADATA_STATUS 复制 SALV_TABLE_STANDARD, 否则会报错（对象不存在）
+  call method gr_alv->set_screen_status
+    exporting
+      pfstatus = 'SALV_TABLE_STANDARD'
+      report   = sy-repid.
+
+* display it!
+  gr_alv->display( ).
