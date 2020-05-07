@@ -1,0 +1,38 @@
+@AbapCatalog.sqlViewName: 'ZBV_VBAP_ITM'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: '销售订单基本视图'
+define view ZBV_VBAP_ITM_DDL
+  as select from    vbap            as _vbap
+    inner join      vbak            as _vbak on _vbak.vbeln = _vbap.vbeln
+    inner join      vbkd            as _vbkd on  _vbkd.vbeln = _vbap.vbeln
+                                             and _vbkd.posnr = '000000'
+    inner join      kna1            as _kna1 on _kna1.kunnr = _vbak.kunnr
+    inner join      ZBV_MARA_CO_DDL as _mara on _mara.matnr = _vbap.matnr
+    left outer join ztvbak_txt      as _txt  on _txt.vbeln = _vbap.vbeln
+
+
+{
+  _vbap.vbeln,
+  _vbap.posnr,
+  _txt.ktext,
+  _vbap.matnr,
+  _vbap.werks,
+  _vbap.prctr,
+  _vbap.paobjnr,
+  _vbak.kunnr,
+  _vbak.auart,
+  _vbak.bukrs_vf,
+  _vbkd.bstkd,
+  _kna1.name1,
+  _mara.mtart,
+  _mara.matkl,
+  _mara.maktx,
+  _mara.prodh,
+  _mara.t179_l1,
+  _mara.vtext_l1,
+  _mara.t179_l2,
+  _mara.vtext_l2
+
+}
