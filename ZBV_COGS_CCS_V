@@ -1,0 +1,132 @@
+@AbapCatalog.sqlViewName: 'ZBV_COGS_CCS_V'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'COGS CCS  by Column'
+define view ZBV_COGS_CCS_DDL
+  as select from ztcogs_ccs as _cogs_ccs
+{
+  _cogs_ccs.belnr,
+  _cogs_ccs.gjahr,
+  _cogs_ccs.bukrs,
+  _cogs_ccs.docln,
+  _cogs_ccs.itmn,
+  _cogs_ccs.element,
+  _cogs_ccs.hsl,
+  @Semantics.currencyCode: true
+  _cogs_ccs.rhcur,
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '015' then
+  _cogs_ccs.hsl
+  end                                               as TOT001, //仪器仪表
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '013' then
+  _cogs_ccs.hsl
+  end                                               as TOT002, //水泵
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '017' then
+  _cogs_ccs.hsl
+  end                                               as TOT003, //管道
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '019' then
+  _cogs_ccs.hsl
+  end                                               as TOT004, //底座支架
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+   when '021' then
+  _cogs_ccs.hsl
+   end                                              as TOT005, //电气件
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '023' then
+  _cogs_ccs.hsl
+  end                                               as TOT006, //钣金件
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '025' then
+  _cogs_ccs.hsl
+  end                                               as TOT007, //耗材
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '027' then
+  _cogs_ccs.hsl
+  end                                               as TOT008, //包材
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '029' then
+  _cogs_ccs.hsl
+  end                                               as TOT009, //软件
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '041' then
+  _cogs_ccs.hsl
+  end                                               as TOT010, //直接人工
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '051' then
+  _cogs_ccs.hsl
+  end                                               as TOT012, //辅助人工
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '053' then
+  _cogs_ccs.hsl
+  end                                               as TOT014, //机物料消耗
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '055' then
+  _cogs_ccs.hsl
+  end                                               as TOT016, //折旧
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '011' then
+  _cogs_ccs.hsl
+  end                                               as TOT017, //换热设备
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '057' then
+  _cogs_ccs.hsl
+  end                                               as TOT019, //电费
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '059' then
+  _cogs_ccs.hsl
+  end                                               as TOT021, //其他制费
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '071' then
+  _cogs_ccs.hsl
+  end                                               as TOT023, //委托加工
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '030' then
+  _cogs_ccs.hsl
+  end                                               as TOT025, //成品/半成品
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '028' then
+  _cogs_ccs.hsl
+  end                                               as TOT027, //原材料-其他
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '026' then
+  _cogs_ccs.hsl
+  end                                               as TOT028, //原材料-阀类
+  @Semantics.amount.currencyCode: 'rhcur'
+  case _cogs_ccs.element
+  when '060' then
+  _cogs_ccs.hsl
+  end                                               as TOT029 //原材料-阀类
+}
