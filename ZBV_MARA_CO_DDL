@@ -1,0 +1,20 @@
+@AbapCatalog.sqlViewName: 'ZBV_MARA_CO_V'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Material Master Data (Client Level)'
+define view ZBV_MARA_CO_DDL
+  as select from    mara             as _mara
+    inner join      makt             as _makt on _mara.matnr = _makt.matnr
+    left outer join ZBV_T179_TXT_DDL as _t179 on _t179.prodh = _mara.prdha
+
+{
+  _mara.matnr,
+  _mara.mtart,
+  _mara.matkl,
+  _makt.maktx,
+  _t179.prodh,
+  _t179.t179_l1,
+  _t179.vtext_l1,
+  _t179.t179_l2,
+  _t179.vtext_l2
+}
