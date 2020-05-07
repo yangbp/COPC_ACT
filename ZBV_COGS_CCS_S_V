@@ -1,0 +1,63 @@
+@AbapCatalog.sqlViewName: 'ZBV_COGS_CCS_S_V'
+@AbapCatalog.compiler.compareFilter: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'COGS CCS  by Column Summary'
+define view ZBV_COGS_CCS_SUM_DDL
+  as select from ZBV_COGS_CCS_DDL as _cogs_ccs
+{
+  _cogs_ccs.belnr,
+  _cogs_ccs.gjahr,
+  _cogs_ccs.bukrs,
+  _cogs_ccs.docln,
+  _cogs_ccs.rhcur,
+  sum(_cogs_ccs.hsl)                              as hsl,
+
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT001 ) as zzkst001 )    as TOT001,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT002 ) as zzkst002 )    as TOT002,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT003 ) as zzkst003 )    as TOT003,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT004 ) as zzkst004 )    as TOT004,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT005 ) as zzkst005 )    as TOT005,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT006 ) as zzkst006 )    as TOT006,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT007 ) as zzkst007 )    as TOT007,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT008 ) as zzkst008 )    as TOT008,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT009 ) as zzkst009 )    as TOT009,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT010 ) as zzkst010 )    as TOT010,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT012 ) as zzkst012 )    as TOT012,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT014 ) as zzkst014 )    as TOT014,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT016 ) as zzkst016 )    as TOT016,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT017 ) as zzkst017 )    as TOT017,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT019 ) as zzkst019 )    as TOT019,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT021 ) as zzkst021 )    as TOT021,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT023 ) as zzkst023 )    as TOT023,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT025 ) as zzkst025 )    as TOT025,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT027 ) as zzkst027 )    as TOT027,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT028 ) as zzkst028 )    as TOT028,
+  @Semantics.amount.currencyCode: 'rhcur'
+  cast ( sum( _cogs_ccs.TOT029 ) as zzkst029 )    as TOT029
+}
+group by
+  _cogs_ccs.belnr,
+  _cogs_ccs.gjahr,
+  _cogs_ccs.bukrs,
+  _cogs_ccs.docln,
+  _cogs_ccs.rhcur
