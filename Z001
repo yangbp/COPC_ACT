@@ -1,0 +1,47 @@
+*&---------------------------------------------------------------------*
+REPORT zco_pc_z001.
+
+TABLES: tckh1,tckh3,dd04d.
+DATA:lv_dtl   LIKE dd04d-rollname,
+     lv_dd04v TYPE dd04v.
+
+PARAMETERS: p_elehk LIKE tckh1-elehk.
+
+START-OF-SELECTION.
+
+  SELECT * FROM tckh3 WHERE elehk = p_elehk.
+
+    SELECT * FROM tckh1 WHERE elehk =  tckh3-elehk
+                        AND elemt = tckh3-elemt
+                        AND spras = '1'.
+
+      CONCATENATE 'ZZKST' tckh3-elemt INTO lv_dtl.
+      lv_dd04v-rollname = lv_dtl.
+
+      lv_dd04v-ddlanguage = '1'.
+      lv_dd04v-domname = 'KSTEL'.
+      lv_dd04v-ddtext = tckh1-txele.
+      lv_dd04v-reptext = tckh1-txele.
+      lv_dd04v-scrtext_s = tckh1-txele.
+      lv_dd04v-scrtext_m = tckh1-txele.
+      lv_dd04v-scrtext_l = tckh1-txele.
+      CALL FUNCTION 'DDIF_DTEL_PUT'
+        EXPORTING
+          name              = lv_dtl
+          dd04v_wa          = lv_dd04v
+        EXCEPTIONS
+          dtel_not_found    = 1
+          name_inconsistent = 2
+          dtel_inconsistent = 3
+          put_failure       = 4
+          put_refused       = 5
+          OTHERS            = 6.
+      IF sy-subrc = 0.
+        WRITE:/ tckh3-elehk, ' ',tckh3-elemt, ' ', tckh1-txele, 'has been created Successfully'.
+      ELSE.
+        WRITE:/ tckh3-elehk, ' ',tckh3-elemt, ' ', tckh1-txele, 'Failure'.
+      ENDIF.
+
+    ENDSELECT.
+
+  ENDSELECT.
