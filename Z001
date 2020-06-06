@@ -68,6 +68,6 @@ START-OF-SELECTION.
         EXPORTING
           name = lv_dtl.
     ELSE.
-      WRITE:/ <tckh1>-elehk, ' ',<tckh1>-elemt, ' ', tckh1-txele, 'Failure'.
+      WRITE:/ <tckh1>-elehk, ' ',<tckh1>-elemt, ' ', <tckh1>-txele, 'Failure'.
     ENDIF.
   ENDLOOP.
